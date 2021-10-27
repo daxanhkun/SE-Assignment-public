@@ -1,0 +1,148 @@
+{% extends 'manage/base.html' %}
+{% block body_block %}
+<form method="POST">
+    {% csrf_token %}
+    <div class="container">
+        <class class="card text-center">
+            <div class="card-header">
+            </div>
+            <div class="card-body">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>Order code</th>
+                            <th>Orderer</th>
+                            <th>Total</th>
+                        </thead>
+                        </tr>
+                    <tbody id="orders-tbody">
+                        {% for order in order_list %}
+                        <tr>
+                            <td><a href="{{order.get_detail_view_url}}">{{order.pk}}</a></td>
+                            <td>{{order.name}}</td>
+                            <td>${{order.get_total_price}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+          </class>
+    
+       
+    {% endblock %}
+    
+
+
+{% block javascript %}
+<script>
+  $(document).ready(function() {
+  $("#success-alert").hide();
+
+});
+
+
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+     const orderSocket = new WebSocket(
+            ws_scheme
+            + "://"
+            + window.location.host
+            + '/ws/realtime-orders/'
+        );
+    orderSocket.onmessage = function (event) {
+
+        const data = JSON.parse(event.data);
+        $("#unconfirmed_orders").text(Number($("#unconfirmed_orders").text()) + 1)
+        $("#orders-tbody").prepend(
+                    "<tr>"
+                    +"<td>" + "<a href='/manage/order/" + data.order_pk + "'" + ">" + data.order_pk + "</a>" + "</td>"
+                    +"<td>" + data.name + "</td>"
+                    +"<td>" + data.phone_number + "</td>"
+                    +"<td>" + data.address + "</td>"
+                    +"<td>" + data.total_price + "</td>"
+                    +"<td style='color: rgb(255, 193, 7);'><strong id='status-" + data.order_pk + "'" + ">Đơn mới</strong></td>"
+                    +"<td class='choice'" + " id='" + data.order_pk + "'" +" style='border: none'>"
+                    +"<button url='" + "/manage/order/mark-confirm/" + data.order_pk + "'" + " status='status-" + data.order_pk + "'"  + " container='" + data.order_pk + "'" + " type='button' class='btn btn-primary confirm-btn'>Nhận</button>"
+                    +"<button url='/manage/order/delete/"+ data.order_pk + "'" +  " style='margin-left:5px' class='btn btn-danger cancel-btn'>Hủy</button>"   
+                    + "</td>"
+                    + "<td class='hidden-radio'><input class='hidden' type='checkbox' name='object_list' value='"+ data.order_pk + "' >" + "</td>"
+                    +"</tr>"
+                )
+        
+         document.getElementById('popup-message').textContent = "Bạn có đơn hàng mới từ " + data.name;
+        $("#success-alert").fadeTo(1000, 500).slideUp(500, function() {
+        $("#success-alert").slideUp(500);
+        });
+
+        $(".hidden-radio").hide()
+
+        $(".confirm-btn").on("click", function(event) {
+        var status_id = "#" + $(this).attr("status");
+        var container_id = "#" + $(this).attr("container");
+        $(status_id).text("Đã nhận");
+        $(status_id).css("color", "rgb(13, 110, 253)")
+        $("#unconfirmed_orders").text(Number($("#unconfirmed_orders").text()) - 1)
+        $("#confirmed_orders").text(Number($("#confirmed_orders").text()) + 1)
+        $(container_id).hide();
+        event.preventDefault()
+        $.ajax({
+            url: $(this).attr("url"),
+            success: function() {
+            }
+        })
+        });
+
+        $(".cancel-btn").on("click", function(event) {
+            if(confirm("Bạn có chắc muốn xóa đơn này?")) {
+                $(this).closest("tr").remove();
+                $("#unconfirmed_orders").text(Number($("#unconfirmed_orders").text()) - 1)
+                $.ajax({
+                    url: $(this).attr("url"),
+                });
+
+            }
+        });
+    }
+
+
+
+
+    $(document).ready(function() {
+        $(".hidden-radio").hide()
+        $('#Mybtn-2').click(function(){
+            $('#MyForm-2').toggle(500);
+            $(".hidden-radio").toggle(500);
+            $(".handle").toggle(500)
+            $(".choice").toggle(500)
+        });
+
+
+        $(".confirm-btn").on("click", function(event) {
+            var status_id = "#" + $(this).attr("status");
+            var container_id = "#" + $(this).attr("container");
+            $(status_id).text("Đã nhận");
+            $(status_id).css("color", "rgb(13, 110, 253)")
+            $("#unconfirmed_orders").text(Number($("#unconfirmed_orders").text()) - 1)
+            $("#confirmed_orders").text(Number($("#confirmed_orders").text()) + 1)
+            $(container_id).hide();
+            event.preventDefault()
+            $.ajax({
+                url: $(this).attr("url"),
+                success: function() {
+                }
+            })
+        });
+
+        $(".cancel-btn").on("click", function(event) {
+            if(confirm("Bạn có chắc muốn xóa đơn này?")) {
+                $(this).closest("tr").remove();
+                $("#unconfirmed_orders").text(Number($("#unconfirmed_orders").text()) - 1)
+                $.ajax({
+                    url: $(this).attr("url"),
+                });
+
+            }
+        });
+
+    });
+</script>
+{% endblock %}

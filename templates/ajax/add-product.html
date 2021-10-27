@@ -1,0 +1,30 @@
+{% load static %}
+<div>
+  <div class="item-line">
+    <div style="width: 10%;" class="item-line-btn">
+            <input class="remove-btn" href="{{ordered_product.get_remove_from_cart_url}}" total-price="total-price-{{ordered_product.product.pk}}" style="width: 25px;" type="image" src="{% static 'close.svg' %}" >
+    </div>
+    <div style="width: 50%;">
+        {{product.name}}
+    </div>
+    <div style="width: 200px; display: flex;">
+      <button quantity="quantity-{{product.pk}}" single-price="single-price-{{product.pk}}" total-price="total-price-{{product.pk}}" href="{{ordered_product.get_reduce_product_url}}" class="counter-btn reduce-btn"><i class="arrow down"></i></button>    
+      <div id="quantity-{{product.pk}}" class="counter-num">
+        <span>1</span>
+      </div>
+        <button quantity="quantity-{{product.pk}}" single-price="single-price-{{product.pk}}" total-price="total-price-{{product.pk}}" href="{{product.get_add_to_cart_url}}" class="counter-btn increase-quantity-btn"><i class="arrow up"></i></button>
+    </div>
+    <div id="single-price-{{product.pk}}" class="counter-num" style="width: 15%;">
+        {{product.price}}
+    </div>
+    <div class="counter-num" style="width: 15%;">
+        <strong id="total-price-{{product.pk}}">{{product.price}}</strong> 
+    </div>
+  </div>
+  <div>
+    <hr>
+  </div>
+</div>
+
+
+

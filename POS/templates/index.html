@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block nav %}
+<div style="margin-top: 5px;">
+    <form id="search-form" action="">
+      {% csrf_token %}
+      <input type="text" name="" id="search-input" placeholder="Search" class="form-control mr-sm-2 p-2 search" autocomplete="off">
+      <div id="results-box" class="results-card not-visible"></div>
+
+    </form>
+  </div>
+{% endblock %}
+
+{% block body_block %}
+<div class="nav-bar">
+    <nav>
+        <ul id="main-menu">
+          <li><a href="{% url 'pos_app:index' %}" class="cat-btn">All</a></li>
+          {%for category in category_list %}
+          <li><a href="{% url 'pos_app:index' %}?category={{category}}" class="cat-btn">{{category}}</a></li>
+          {% endfor %}
+        </ul>
+    </nav>
+</div>
+
+<main class="main-container_flex-row">
+    <section class="menu-grid">
+        <ul class="products">
+            {% for product in product_list %}
+            <li >
+                <div  class="product-item">
+                    <div class="product-top">
+                        <a quantity="quantity-{{product.pk}}" single-price="single-price-{{product.pk}}" total-price="total-price-{{product.pk}}" type="image" href="{{product.get_add_to_cart_url}}" class="product-thumb">
+                            <img class="image" src="{{product.image.url}}" alt="">
+                        </a>
+                        <a style="width: 100%;" href="" class="buy-now">Buy now</a>
+                    </div>
+                    <div class="product-info">
+                        <a href="" class="product-name">{{product.name}}</a>
+                        <div class="product-price">${{product.price}}</div>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+      </section>
+
+      <section class="invoice_flex-column">
+        <div class="cart">
+            
+            <img src="{% static 'cart1.png' %}" alt="">
+            <h2> Your Cart</h2>
+        </div>
+        <div class="invoice-list">
+            <div style="margin: 1%;" class="choosed-item">
+                {% for ordered_product in ordered_product_list %}
+                <div>
+                    <div class="item-line">
+                      <div style="width: 10%;" class="item-line-btn">
+                              <input class="remove-btn" href="{{ordered_product.get_remove_from_cart_url}}" total-price="total-price-{{ordered_product.product.pk}}" style="width: 25px;" type="image" src="{% static 'close.svg' %}" >
+                      </div>
+                      <div style="width: 50%;">
+                          {{ordered_product.product.name}}
+                      </div>
+                      <div style="width: 200px; display: flex;">
+                        <button quantity="quantity-{{ordered_product.product.pk}}" single-price="single-price-{{ordered_product.product.pk}}" total-price="total-price-{{ordered_product.product.pk}}" href="{{ordered_product.get_reduce_product_url}}" class="counter-btn reduce-btn"><i class="arrow down"></i></button>    
+                        <div id="quantity-{{ordered_product.product.pk}}" class="counter-num">
+                          <span>{{ordered_product.quantity}}</span>
+                        </div>
+                          <button quantity="quantity-{{ordered_product.product.pk}}" single-price="single-price-{{ordered_product.product.pk}}" total-price="total-price-{{ordered_product.product.pk}}" href="{{ordered_product.product.get_add_to_cart_url}}" class="counter-btn increase-quantity-btn"><i class="arrow up"></i></button>
+                      </div>
+                      <div id="single-price-{{ordered_product.product.pk}}" class="counter-num" style="width: 15%;">
+                          {{ordered_product.get_single_price}}
+                      </div>
+                      <div class="counter-num" style="width: 15%;">
+                          <strong id="total-price-{{ordered_product.product.pk}}">{{ordered_product.get_total_price}}</strong> 
+                      </div>
+                    </div>
+                    <div>
+                      <hr>
+                    </div>
+                  </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="invoice-total">
+            <h4>Total: </h4>
+            {% if order %}
+            <h3>$<strong id="total-price">{{order.get_total_price}}</strong></h3>
+            {% else %}
+            <h3>$<strong id="total-price">0</strong></h3>
+            {% endif %}
+        </div>
+        <div class="invoice-payment">
+            <a href="{% url 'pos_app:payment_choice' %}">Payment</a>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+
+
+
+
+

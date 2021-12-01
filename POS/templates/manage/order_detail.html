@@ -1,0 +1,49 @@
+{% extends 'manage/base.html' %}
+{% block body_block %}
+<div class="container">
+    <div class="container-order" style="text-align: center;" >
+        <div style="text-align: center;">
+            <h3>Order code: {{order.pk}}</h3>
+            <h3>Customer: {{order.name}}</h3>
+            <hr>
+        </div>
+        <div style=" display: flex; flex-direction: column;">
+            <table class="order-detail">
+                <th>Name</th>
+                <th>Q.</th>
+                <th>Ammount</th>
+                {% for product in ordered_product_list %}
+                <tr class="order-detail">
+                    <td>{{product.get_name}}</td>
+                    <td>{{product.quantity}}</td>
+                    <td>{{product.get_total_price}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+        </div> 
+        
+        <hr>
+        <div>
+            <h5>Total: {{order.get_total_price}}</h5>
+            {{order.payment_date|date:'d/m/y H:i'}}
+       
+
+
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function() {
+    $(".delete-btn").on("click", function(event) {
+        if(!confirm("Bạn có chắc muốn xóa đơn này?")) {
+            event.preventDefault();
+        }
+        
+    })
+});
+</script>
+
+{% endblock %}

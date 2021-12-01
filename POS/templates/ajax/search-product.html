@@ -1,0 +1,14 @@
+{% for product in qs %}
+<a quantity="quantity-{{product.pk}}" single-price="single-price-{{product.pk}}" total-price="total-price-{{product.pk}}" class="increase-quantity-btn search-add-btn item" href="{{product.get_add_to_cart_url}}">
+    <div class="row mt-2 mb-2">
+        <div class="col-2">
+            <img src="{{product.image.url}}" class="search-product-img">
+        </div>
+        <div class="col-10">
+            <h5>{{product.name}}</h5>
+            <p class="text-muted">${{product.price}}</p>
+        </div>
+    </div>
+</a>
+
+{% endfor %}

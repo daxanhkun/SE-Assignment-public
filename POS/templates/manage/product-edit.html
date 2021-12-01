@@ -1,0 +1,13 @@
+{% extends 'manage/base.html'%}
+{% block body_block %}
+<div class="container">
+    <hr>
+
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{edit_form.as_p}}
+        <button type="submit" class="btn btn-success btn-primary\">Save</button>
+    </form>
+</div>
+
+{% endblock %}

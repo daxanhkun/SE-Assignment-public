@@ -1,0 +1,16 @@
+{% for product in product_list %}
+<li >
+    <div  class="product-item">
+        <div class="product-top">
+            <a quantity="quantity-{{product.pk}}" single-price="single-price-{{product.pk}}" total-price="total-price-{{product.pk}}" type="image" href="{{product.get_add_to_cart_url}}" class="product-thumb">
+                <img class="image" src="{{product.image.url}}" alt="">
+            </a>
+            <a style="width: 100%;" href="" class="buy-now">Buy now</a>
+        </div>
+        <div class="product-info">
+            <a href="" class="product-name">{{product.name}}</a>
+            <div class="product-price">${{product.price}}</div>
+        </div>
+    </div>
+</li>
+{% endfor %}

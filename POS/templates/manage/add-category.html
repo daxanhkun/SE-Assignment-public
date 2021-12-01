@@ -1,0 +1,16 @@
+{% extends 'manage/base.html' %}
+
+{% block body_block %}
+<form style="margin: 5%;" method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="category" class="form-label">Category name</label>
+      <input type="text" name="category" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+  </form>
+
+{% endblock %}
+
+
+{% block}
